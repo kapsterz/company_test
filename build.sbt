@@ -1,8 +1,8 @@
-name := "lotusflare_test"
+name := "generator"
 
 version := "1.0"
 
-lazy val `lotusflare_test` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `generator` = (project in file(".")).enablePlugins(PlayScala)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
@@ -27,6 +27,7 @@ dockerfile in docker := {
   val targetDir = "/app"
 
   new Dockerfile {
+    expose(9000)
     from("java")
     entryPoint(s"$targetDir/bin/${executableScriptName.value}")
     copy(appDir, targetDir)

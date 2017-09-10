@@ -30,10 +30,11 @@ class StreamQueueHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
                                   executionContext: ExecutionContext,
                                   materializer: Materializer,
                                   actorSystem: ActorSystem) {
+  //TODO: Move conf in to file
   val redisKey: String = "chached_query"
   val redisTimeout: Int = 100
   val redisTryCount: Int = 1000
-
+  Future(checkCache)
   val queueBufferSize: Int = configuration.get[Int]("common.queue.bufferSize")
   implicit val token: Token = configuration.get[String]("common.security.token")
   implicit val format: serialization.Format = com.redis.serialization.Format {

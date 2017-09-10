@@ -39,7 +39,7 @@ class StreamQueueHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
   val redisTryCount: Int = 1000
 
   val queueBufferSize: Int = configuration.get[Int]("common.queue.bufferSize")
-  implicit val token: Token = configuration.get[String]("common.token")
+  implicit val token: Token = configuration.get[String]("common.security.token")
   implicit val format: serialization.Format = com.redis.serialization.Format {
     case element: SendData =>
       element.toJson.toString().getBytes("UTF-8")

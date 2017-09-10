@@ -20,5 +20,16 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream-kafka" % "0.17")
 
 unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/test")
+enablePlugins(sbtdocker.DockerPlugin, JavaAppPackaging)
+enablePlugins(DockerPlugin)
 
-      
+dockerfile in docker := {
+  val appDir: File = stage.value
+  val targetDir = "/app"
+
+  new Dockerfile {
+    from("java")
+    entryPoint(s"$targetDir/bin/${executableScriptName.value}")
+    copy(appDir, targetDir)
+  }
+}

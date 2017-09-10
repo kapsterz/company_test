@@ -1,5 +1,7 @@
 package helpers
 
+import akka.NotUsed
+import akka.stream.scaladsl.Source
 import models.public.Token
 import play.api.libs.json.{JsObject, JsValue, Reads, Writes}
 import play.api.{ConfigLoader, Configuration, Logger}
@@ -11,8 +13,8 @@ import scala.util.Try
 package object implicits {
   implicit val logger: Logger = Logger("Generator")
 
-  implicit class StringImplicits(string: String) {
-
+  implicit class IterableToSource[T](itarable: Iterable[T]) {
+    def akkaSrc: Source[T, NotUsed] = Source.fromIterator(() => itarable.toIterator)
   }
 
   implicit class TokenImplicits(token: Token) {

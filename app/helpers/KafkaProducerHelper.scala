@@ -40,11 +40,11 @@ class KafkaProducerHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
 
   def sendToKafka[T](meterId: MeterId, sendData: Seq[SendData], processor: Processor)(implicit token: Token): Future[Done] = {
     producer.send(KafkaProducerRecord(processor.url, meterId.id.toString, sendData)).andThen {
-      case Success(_) if sendData.nonEmpty =>
-        balancerActor ! Add(sendData.head.token, processor)
+      case Success(_) =>
+        balancerActor ! Add(token, processor)
       case Failure(exception) =>
         logger.error("Balancer.helpers.KafkaHelper: Exception during sending message to Kafka\n", exception)
-        balancerActor ! Add(sendData.head.token, processor)
+        balancerActor ! Add(token, processor)
         balancerActor ! sendData
       case _  =>
         logger.error("Balancer.helpers.KafkaHelper: Unknown Exception during sending message to Kafka\n")

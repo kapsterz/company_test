@@ -2,6 +2,7 @@ package models
 
 import models.public._
 import play.api.libs.json.{Json, OFormat}
+import java.util.UUID
 
 package object internal {
 
@@ -23,6 +24,15 @@ package object internal {
     implicit val format: OFormat[Fail] = Json.format[Fail]
     val unknown = Fail(-1, "Unknown exception")
     val tokenNotValid = Fail(1, "Token not valid")
+  }
+
+
+  case class MeterId(id: UUID)
+
+  object MeterId {
+
+    def generate = MeterId(UUID.randomUUID)
+
   }
 
 }

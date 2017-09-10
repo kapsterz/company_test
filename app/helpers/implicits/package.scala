@@ -49,7 +49,11 @@ package object implicits {
     def toJson(implicit format: Writes[T]): JsValue = format.writes(obj)
   }
 
-  implicit class JsonReads[T](obj: JsObject) {
+  implicit class JsValueReads[T](obj: JsValue) {
+    def toObj(implicit format: Reads[T]): Option[T] = format.reads(obj).asOpt
+  }
+
+  implicit class JsObjectReads[T](obj: JsObject) {
     def toObj(implicit format: Reads[T]): Option[T] = format.reads(obj).asOpt
   }
 

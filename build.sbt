@@ -21,7 +21,6 @@ libraryDependencies ++= Seq(
 
 unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/test")
 enablePlugins(sbtdocker.DockerPlugin, JavaAppPackaging)
-enablePlugins(DockerPlugin)
 
 dockerfile in docker := {
   val appDir: File = stage.value

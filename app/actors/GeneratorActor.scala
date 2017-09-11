@@ -14,7 +14,7 @@ import play.api.libs.ws.WSClient
 import akka.stream.scaladsl.{Sink, SourceQueueWithComplete, Source => AkkaSrc}
 import akka.util.Timeout
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext}
 import scala.concurrent.duration._
 
 class GeneratorActor @Inject()(generatorHelper: GeneratorHelper,
@@ -78,7 +78,7 @@ class GeneratorActor @Inject()(generatorHelper: GeneratorHelper,
 
   override def receive: Actor.Receive = {
 
-    case s@Start(token, url) if token.isValid =>
+    case Start(token, url) if token.isValid =>
       context.become(actorStarted(url))
       context
         .system
@@ -95,7 +95,7 @@ class GeneratorActor @Inject()(generatorHelper: GeneratorHelper,
     case Stop(token) if !token.isValid =>
       sender() ! Fail.tokenNotValid
 
-    case s =>
+    case _ =>
       sender() ! Fail.unknown
 
   }

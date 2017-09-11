@@ -24,13 +24,13 @@ import scala.util.Try
 
 class StreamQueueHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
                                  (ws: WSClient,
-                                  kafkaProducerHelper: KafkaProducerHelper,
-                                  redisClient: RedisClient)
+                                  kafkaProducerHelper: KafkaProducerHelper)
                                  (implicit configuration: Configuration,
                                   executionContext: ExecutionContext,
                                   materializer: Materializer,
                                   actorSystem: ActorSystem) {
   //TODO: Move conf in to file
+  val redisClient = new RedisClient("127.0.0.1", 6379)
   val redisKey: String = "chached_query"
   val redisTimeout: Int = 100
   val redisTryCount: Int = 1000

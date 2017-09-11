@@ -1,8 +1,9 @@
-name := "lotusflare_test"
+
+name := "balancer"
 
 version := "1.0"
 
-lazy val `lotusflare_test` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `balancer` = (project in file(".")).enablePlugins(PlayScala)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
@@ -25,5 +26,17 @@ libraryDependencies ++= Seq(
 )
 
 unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/test")
+enablePlugins(sbtdocker.DockerPlugin, JavaAppPackaging)
 
+dockerfile in docker := {
+  val appDir: File = stage.value
+  val targetDir = "/app"
+
+  new Dockerfile {
+    expose(9000)
+    from("java")
+    entryPoint(s"$targetDir/bin/${executableScriptName.value}")
+    copy(appDir, targetDir)
+  }
+}
       

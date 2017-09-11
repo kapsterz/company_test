@@ -1,8 +1,6 @@
 import com.google.inject.AbstractModule
 import java.time.Clock
-import actors._
 import play.api.libs.concurrent.AkkaGuiceSupport
-import protocols.actors._
 
 /**
  * This class is a Guice module that tells Guice how to bind several
@@ -22,7 +20,6 @@ class Module extends AbstractModule with AkkaGuiceSupport {
     // Ask Guice to create an instance of ApplicationTimer when the
     // application starts.
     // Set AtomicCounter as the implementation for Counter.
-    bindActor[ProcessorActor](PROCESSOR)
   }
 
 }

@@ -12,8 +12,6 @@ import scala.util.{Random, Try}
 
 package object implicits {
   implicit val logger: Logger = Logger("Processor")
-  implicit val topic: Topic = Random.nextString(10)
-
   implicit class IterableToSource[T](itarable: Iterable[T]) {
     def akkaSrc: Source[T, NotUsed] = Source.fromIterator(() => itarable.toIterator)
   }

@@ -30,7 +30,7 @@ class StreamQueueHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
                                   materializer: Materializer,
                                   actorSystem: ActorSystem) {
   //TODO: Move conf in to file
-  val redisClient = new RedisClient("10.0.2.15", 6379)
+  val redisClient = new RedisClient("10.0.2.2", 6379)
   val redisKey: String = "chached_query"
   val redisTimeout: Int = 100
   val redisTryCount: Int = 1000

@@ -11,7 +11,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.Try
 
 package object implicits {
-  implicit val logger: Logger = Logger("Generator")
+  implicit val logger: Logger = Logger("Balancer")
 
   implicit class IterableToSource[T](itarable: Iterable[T]) {
     def akkaSrc: Source[T, NotUsed] = Source.fromIterator(() => itarable.toIterator)

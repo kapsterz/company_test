@@ -1,9 +1,9 @@
 
-name := "processor"
+name := "dataCollector"
 
 version := "1.0"
 
-lazy val `processor` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `dataCollector` = (project in file(".")).enablePlugins(PlayScala)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 

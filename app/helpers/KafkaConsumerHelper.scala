@@ -35,7 +35,7 @@ class KafkaConsumerHelper @Inject()(@Named(PROCESSOR) processorActor: ActorRef)
 
   processorActor ! Add(token, Processor(topic))
 
-  private val consumerSource = Consumer.plainSource[String, Seq[SendData]](consumerSettings, Subscriptions.topics("topic"))
+  private val consumerSource = Consumer.plainSource[String, Seq[SendData]](consumerSettings, Subscriptions.topics(topic))
     .map { message =>
       processorActor ! Delete(token, Processor(topic))
       message.value().toList

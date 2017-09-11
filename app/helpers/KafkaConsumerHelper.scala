@@ -17,7 +17,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import play.api.Configuration
 import protocols.actors.PROCESSOR
 import services.serializers.JsonDeserializer
-
+import helpers.implicits._
 import scala.concurrent.ExecutionContext
 
 class KafkaConsumerHelper @Inject()(@Named(PROCESSOR) processorActor: ActorRef)
@@ -38,6 +38,7 @@ class KafkaConsumerHelper @Inject()(@Named(PROCESSOR) processorActor: ActorRef)
   private val consumerSource = Consumer.plainSource[String, Seq[SendData]](consumerSettings, Subscriptions.topics(topic))
     .map { message =>
       processorActor ! Delete(token, Processor(topic))
+      logger.info("Receive message")
       message.value().toList
     }
     .via(processorHelper.executionFlow)

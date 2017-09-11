@@ -4,20 +4,18 @@ package helpers
 import javax.inject.Named
 
 import akka.Done
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
-import com.typesafe.config.Config
 import cakesolutions.kafka.{KafkaProducer, KafkaProducerRecord}
 import com.google.inject.Inject
+import com.typesafe.config.Config
+import helpers.implicits._
 import models.internal._
 import models.public._
-import org.apache.kafka.clients.producer.RecordMetadata
-import org.apache.kafka.common.requests.OffsetCommitResponse
 import org.apache.kafka.common.serialization.StringSerializer
 import play.api.Configuration
 import protocols.actors.BALANCER
 import services.serializers.JsonSerializer
-import helpers.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -45,7 +43,7 @@ class KafkaProducerHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
         logger.error("Balancer.helpers.KafkaHelper: Exception during sending message to Kafka\n", exception)
         balancerActor ! Add(token, processor)
         balancerActor ! sendData
-      case _  =>
+      case _ =>
         logger.error("Balancer.helpers.KafkaHelper: Unknown Exception during sending message to Kafka\n")
         balancerActor ! sendData
     }.map { _ =>

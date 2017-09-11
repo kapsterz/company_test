@@ -2,21 +2,16 @@ package controllers
 
 import javax.inject._
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.Materializer
-import models.public._
-import play.api.mvc._
-
-import scala.concurrent.{ExecutionContext, Future}
-import protocols.actors._
-import akka.pattern._
-import akka.util.Timeout
-import models.internal.{Fail, SendData, Succ}
 import helpers.implicits._
+import models.internal.Succ
 import play.api.Configuration
 import play.api.libs.ws.WSClient
+import play.api.mvc._
+import protocols.actors._
 
-import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class MainController @Inject()(@Named(PROCESSOR) processorActor: ActorRef)

@@ -14,6 +14,7 @@ resolvers += Resolver.bintrayRepo("cakesolutions", "maven")
 scalaVersion := "2.12.2"
 
 libraryDependencies ++= Seq(
+  "net.debasishg" %% "redisclient" % "3.4",
   jdbc,
   ehcache,
   ws,

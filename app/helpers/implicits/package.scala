@@ -2,16 +2,17 @@ package helpers
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
-import models.public.Token
+import models.public._
 import play.api.libs.json.{JsObject, JsValue, Reads, Writes}
 import play.api.{ConfigLoader, Configuration, Logger}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.util.Try
+import scala.util.{Random, Try}
 
 package object implicits {
-  implicit val logger: Logger = Logger("Generator")
+  implicit val logger: Logger = Logger("Processor")
+  implicit val topic: Topic = Random.nextString(10)
 
   implicit class IterableToSource[T](itarable: Iterable[T]) {
     def akkaSrc: Source[T, NotUsed] = Source.fromIterator(() => itarable.toIterator)
@@ -40,7 +41,7 @@ package object implicits {
 
     def recoverWithFatal(pf: PartialFunction[Throwable, Future[T]])(implicit executor: ExecutionContext): Future[T] = {
       try {
-        Future.successful(Await.result(s, Duration.Inf))
+        Future(Await.result(s, Duration.Inf))
       } catch {
         pf
       }

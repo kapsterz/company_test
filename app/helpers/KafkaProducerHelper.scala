@@ -3,7 +3,6 @@ package helpers
 
 import javax.inject.Named
 
-import actors.BalancerActor
 import akka.Done
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
@@ -34,11 +33,11 @@ class KafkaProducerHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
     KafkaProducer.Conf(
       config,
       keySerializer = new StringSerializer,
-      valueSerializer = new JsonSerializer[Seq[SendData]]
+      valueSerializer = new JsonSerializer[SendData]
     )
   )
 
-  def sendToKafka[T](meterId: MeterId, sendData: Seq[SendData], processor: Processor)(implicit token: Token): Future[Done] = {
+  def sendToKafka[T](meterId: MeterId, sendData: SendData, processor: Processor)(implicit token: Token): Future[Done] = {
     producer.send(KafkaProducerRecord(processor.url, meterId.id.toString, sendData)).andThen {
       case Success(_) =>
         balancerActor ! Add(token, processor)

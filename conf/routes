@@ -6,20 +6,7 @@
 # An example controller showing a sample home page
 
 
-GET           /api/v1/start            controllers.MainController.startOrStop(token: String, host: String)
-
-GET           /api/v1/stop             controllers.MainController.startOrStop(token: String, host: String)
-
-POST          /api/v1/sendData         controllers.MainController.sendData
-
-PUT           /api/v1/processor        controllers.MainController.addProcessor(token: String, host: String)
-
-DELETE        /api/v1/processor        controllers.MainController.deleteProcessor(token: String, host: String)
-
 GET           /api/v1/ping             controllers.MainController.ping
-#TODO: implement route to get data
-#GET     /api/v1/data                    controllers.MainController.getData(token: String)
-
 
 # Map static resources from the /public folder to the /assets URL path
 #GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

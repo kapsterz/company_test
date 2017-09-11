@@ -1,9 +1,9 @@
 
-name := "balancer"
+name := "processor"
 
 version := "1.0"
 
-lazy val `balancer` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `processor` = (project in file(".")).enablePlugins(PlayScala)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 

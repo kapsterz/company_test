@@ -1,10 +1,15 @@
 package models
 
-import play.api.libs.json.Writes
+import play.api.libs.json.{Json, OFormat, Writes}
+
+import scala.util.Random
 
 package object public {
 
   type Token = String
+
+  type Topic = String
+
 
   type URL = String
 
@@ -19,5 +24,16 @@ package object public {
   case class Delete(token: Token, processor: Processor)
 
   case class Processor(url: URL)
+
+  object Add {
+    implicit val format: OFormat[Add] = Json.format[Add]
+  }
+
+  case class AddRepaid(add: Add)
+
+  object Processor {
+    implicit val format: OFormat[Processor] = Json.format[Processor]
+    def generate: Processor = Processor(Random.nextString(10))
+  }
 
 }

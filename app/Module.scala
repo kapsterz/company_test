@@ -22,7 +22,7 @@ class Module extends AbstractModule with AkkaGuiceSupport {
     // Ask Guice to create an instance of ApplicationTimer when the
     // application starts.
     // Set AtomicCounter as the implementation for Counter.
-    bindActor[BalancerActor](BALANCER, _.withMailbox("prio-mailbox"))
+    bindActor[ProcessorActor](PROCESSOR)
   }
 
 }

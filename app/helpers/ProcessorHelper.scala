@@ -35,13 +35,17 @@ class ProcessorHelper @Inject()(@Named(PROCESSOR) processorActor: ActorRef)
 
   val queueTryCount: Int = 100
 
+  val queueBatchSize: Int = configuration.get[Int]("common.queue.batchSize")
 
-  val executionFlow: Flow[SendData, Done, NotUsed] =
-    Flow[SendData]
+
+  val executionFlow: Flow[List[SendData], Done, NotUsed] =
+    Flow[List[SendData]]
+      .mapConcat(identity)
       .mapAsync(processorParallelism) {
         executeSendData
       }
-      .mapAsync(processorParallelism) { sendData =>
+      .grouped(queueBatchSize)
+      .mapAsync(processorParallelism / 10) { sendData =>
         kafkaProducerHelper.sendToKafka(MeterId.generate, sendData, Processor(dataCollectorConf))
           .map(_ => Done)
           .recoverWithFatal {
@@ -59,7 +63,7 @@ class ProcessorHelper @Inject()(@Named(PROCESSOR) processorActor: ActorRef)
                   case _ =>
                     logger.error("Processor.heplers.ProcessorHelper: Error during sending data\n" + ex)
                     Future(
-                      addToQueue(sendData)
+                      addToQueue(sendData.toList)
                     )
                       .map { _ =>
                         Done
@@ -67,13 +71,13 @@ class ProcessorHelper @Inject()(@Named(PROCESSOR) processorActor: ActorRef)
                 }
           }
       }
-  val streamQueue: SourceQueueWithComplete[SendData] = AkkaSrc
-    .queue[SendData](queueBufferSize, OverflowStrategy.backpressure)
+  val streamQueue: SourceQueueWithComplete[List[SendData]] = AkkaSrc
+    .queue[List[SendData]](queueBufferSize, OverflowStrategy.backpressure)
     .via(executionFlow)
     .to(Sink.ignore)
     .run()
 
-  def addToQueue(sendData: SendData, _try: Int = 0): Done = Await.result(streamQueue.offer(sendData), Duration.Inf) match {
+  def addToQueue(sendData: List[SendData], _try: Int = 0): Done = Await.result(streamQueue.offer(sendData), Duration.Inf) match {
     case Enqueued =>
       Done
     case _ if _try < queueTryCount =>

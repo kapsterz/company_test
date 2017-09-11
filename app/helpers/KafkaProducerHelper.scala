@@ -1,10 +1,8 @@
 package helpers
 
 
-import javax.inject.Named
-
 import akka.Done
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorSystem
 import akka.stream.Materializer
 import cakesolutions.kafka.{KafkaProducer, KafkaProducerRecord}
 import com.google.inject.Inject
@@ -14,14 +12,13 @@ import models.internal._
 import models.public._
 import org.apache.kafka.common.serialization.StringSerializer
 import play.api.Configuration
-import protocols.actors.BALANCER
 import services.serializers.JsonSerializer
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-class KafkaProducerHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
-                                   (config: Config,
+class KafkaProducerHelper @Inject()(config: Config,
+                                    processorHelper: ProcessorHelper,
                                     configuration: Configuration)
                                    (implicit actorSystem: ActorSystem,
                                     executionContext: ExecutionContext,
@@ -31,21 +28,19 @@ class KafkaProducerHelper @Inject()(@Named(BALANCER) balancerActor: ActorRef)
     KafkaProducer.Conf(
       config,
       keySerializer = new StringSerializer,
-      valueSerializer = new JsonSerializer[SendData]
+      valueSerializer = new JsonSerializer[Seq[SendData]]
     )
   )
 
-  def sendToKafka[T](meterId: MeterId, sendData: SendData, processor: Processor)(implicit token: Token): Future[Done] = {
+  def sendToKafka[T](meterId: MeterId, sendData: Seq[SendData], processor: Processor)(implicit token: Token): Future[Done] = {
     producer.send(KafkaProducerRecord(processor.url, meterId.id.toString, sendData)).andThen {
       case Success(_) =>
-        balancerActor ! Add(token, processor)
       case Failure(exception) =>
         logger.error("Balancer.helpers.KafkaHelper: Exception during sending message to Kafka\n", exception)
-        balancerActor ! Add(token, processor)
-        balancerActor ! sendData
+        processorHelper.addToQueue(sendData.toList)
       case _ =>
         logger.error("Balancer.helpers.KafkaHelper: Unknown Exception during sending message to Kafka\n")
-        balancerActor ! sendData
+        processorHelper.addToQueue(sendData.toList)
     }.map { _ =>
       Done
     }
